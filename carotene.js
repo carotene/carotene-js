@@ -21,6 +21,10 @@ var Carotene = function() {
         this.onPresence = callback;
     };
 
+    var doSetOnInfo = function(callback) {
+        this.onInfo = callback;
+    };
+
     var doAuthenticate = function() {
         if (userId) {
             this.websocket.send(JSON.stringify({authenticate: userId, token: token}));
@@ -106,7 +110,7 @@ var Carotene = function() {
 
     var processInfo = function(payload) {
         if (this.onInfo) {
-            this.onInfo(payload.message);
+            this.onInfo(payload);
         }
     };
 
@@ -150,6 +154,10 @@ var Carotene = function() {
 
         setOnPresence: function(callback) {
             doSetOnPresence(callback);
+        },
+
+        setOnInfo: function(callback) {
+            doSetOnInfo(callback);
         }
     };
 }();
