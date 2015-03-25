@@ -1,6 +1,6 @@
 var Carotene = function() {
     var caroteneUrl = null;
-    var websocket = null;
+    var stream = null;
     var userId = null;
     var token = null;
     var state = 'CLOSED';
@@ -10,11 +10,11 @@ var Carotene = function() {
 
     var doSubscribe = function(channel) {
         var message = JSON.stringify({subscribe: channel});
-        this.websocket.send(message);
+        this.stream.send(message);
     };
 
     var getPresence = function(message) {
-        this.websocket.send(message);
+        this.stream.send(message);
     };
 
     var doSetOnPresence = function(callback) {
@@ -27,7 +27,7 @@ var Carotene = function() {
 
     var doAuthenticate = function() {
         if (userId) {
-            this.websocket.send(JSON.stringify({authenticate: userId, token: token}));
+            this.stream.send(JSON.stringify({authenticate: userId, token: token}));
         }
     };
 
@@ -38,16 +38,16 @@ var Carotene = function() {
     };
 
     var doPublish = function(channel, message) {
-        this.websocket.send(JSON.stringify({publish: message, channel: channel}));
+        this.stream.send(JSON.stringify({publish: message, channel: channel}));
     };
 
     var connect = function() {
         var that = this;
-        this.websocket = new WebSocket(caroteneUrl);
-        this.websocket.onopen = function(evt) { onOpen(evt); };
-        this.websocket.onclose = function(evt) { onClose(evt); };
-        this.websocket.onmessage = function(evt) { onMessage(evt); };
-        this.websocket.onerror = function(evt) { onError(evt); };
+        this.stream = $.bullet(caroteneUrl, {disableWebSocket: false, disableEventSource: true});
+        this.stream.onopen = function(evt) { onOpen(evt); };
+        this.stream.onclose = function(evt) { onClose(evt); };
+        this.stream.onmessage = function(evt) { onMessagePreprocess(evt); };
+        this.stream.onerror = function(evt) { onError(evt); };
     };
 
     var onOpen = function(evt) {
@@ -63,8 +63,18 @@ var Carotene = function() {
     var onError = function(evt) {
     };
 
-    var onMessage = function(evt) {
+    var onMessagePreprocess = function(evt) {
         payload = JSON.parse(evt.data);
+        if( Object.prototype.toString.call( payload ) === '[object Array]' ) {
+            for (var i =0; i < payload.length; ++i) {
+                onMessage(payload[i]);
+            }
+        } else {
+            onMessage(payload);
+        }
+    };
+
+    var onMessage = function(payload) {
         if ('type' in payload) {
             switch(payload.type) {
                 case 'message':
