@@ -1,0 +1,13 @@
+{
+    "supernew": true,
+
+    "globals": {
+        "window": true,
+        "setTimeout": true,
+        "clearTimeout": true,
+        "setInterval": true,
+        "clearInterval": true,
+        "$": false,
+        "jQuery": true
+    }
+}

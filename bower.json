@@ -1,0 +1,14 @@
+{
+  "name": "carotene",
+  "version": "0.2.1",
+  "description": "Carotene client library for using with the Carotene real-time PubSub server",
+  "keywords": [
+    "carotene",
+    "javascript",
+    "realtime",
+    "pubsub",
+    "websockets"
+  ],
+  "main": "dist/carotene.js",
+  "license": "MIT"
+}

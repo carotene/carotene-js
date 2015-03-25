@@ -1,4 +1,6 @@
-var Carotene = function() {
+function caroteneConstructor() {
+    'use strict';
+
     var caroteneUrl = null;
     var stream = null;
     var userId = null;
@@ -10,24 +12,24 @@ var Carotene = function() {
 
     var doSubscribe = function(channel) {
         var message = JSON.stringify({subscribe: channel});
-        this.stream.send(message);
+        stream.send(message);
     };
 
     var getPresence = function(message) {
-        this.stream.send(message);
+        stream.send(message);
     };
 
     var doSetOnPresence = function(callback) {
-        this.onPresence = callback;
+        onPresence = callback;
     };
 
     var doSetOnInfo = function(callback) {
-        this.onInfo = callback;
+        onInfo = callback;
     };
 
     var doAuthenticate = function() {
         if (userId) {
-            this.stream.send(JSON.stringify({authenticate: userId, token: token}));
+            stream.send(JSON.stringify({authenticate: userId, token: token}));
         }
     };
 
@@ -38,16 +40,15 @@ var Carotene = function() {
     };
 
     var doPublish = function(channel, message) {
-        this.stream.send(JSON.stringify({publish: message, channel: channel}));
+        stream.send(JSON.stringify({publish: message, channel: channel}));
     };
 
     var connect = function() {
-        var that = this;
-        this.stream = $.bullet(caroteneUrl, {disableWebSocket: false, disableEventSource: true});
-        this.stream.onopen = function(evt) { onOpen(evt); };
-        this.stream.onclose = function(evt) { onClose(evt); };
-        this.stream.onmessage = function(evt) { onMessagePreprocess(evt); };
-        this.stream.onerror = function(evt) { onError(evt); };
+        stream = $.bullet(caroteneUrl, {disableWebSocket: false, disableEventSource: true});
+        stream.onopen = function(evt) { onOpen(evt); };
+        stream.onclose = function(evt) { onClose(evt); };
+        stream.onmessage = function(evt) { onMessagePreprocess(evt); };
+        stream.onerror = function(evt) { onError(evt); };
     };
 
     var onOpen = function(evt) {
@@ -64,7 +65,7 @@ var Carotene = function() {
     };
 
     var onMessagePreprocess = function(evt) {
-        payload = JSON.parse(evt.data);
+        var payload = JSON.parse(evt.data);
         if( Object.prototype.toString.call( payload ) === '[object Array]' ) {
             for (var i =0; i < payload.length; ++i) {
                 onMessage(payload[i]);
@@ -93,8 +94,8 @@ var Carotene = function() {
     };
 
     var processMessage = function(payload) {
-        toSend = {};
-        if ('from_server' in payload && payload.fromServer == "true") {
+        var toSend = {};
+        if ('from_server' in payload && payload.fromServer === 'true') {
             toSend.fromServer = true;
         }
         if ('user_id' in payload) {
@@ -137,7 +138,7 @@ var Carotene = function() {
             channelsSubscribed[channel] = {
                 onMessage : onMessage
             };
-            if (state == 'OPEN') {
+            if (state === 'OPEN') {
                 doSubscribe(channel);
             }
         },
@@ -151,7 +152,7 @@ var Carotene = function() {
         authenticate: function(authdata) {
             userId = authdata.userId;
             token = authdata.token;
-            if (state == 'OPEN') {
+            if (state === 'OPEN') {
                 doAuthenticate({userId: userId, token: token});
             }
         },
@@ -170,4 +171,6 @@ var Carotene = function() {
             doSetOnInfo(callback);
         }
     };
-}();
+}
+
+var Carotene = new caroteneConstructor();
