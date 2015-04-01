@@ -408,6 +408,7 @@ function caroteneConstructor() {
         stream.onclose = function(evt) { onClose(evt); };
         stream.onmessage = function(evt) { onMessagePreprocess(evt); };
         stream.onerror = function(evt) { onError(evt); };
+        stream.onheartbeat = function(evt) { stream.send('ping'); };
     };
 
     var onOpen = function(evt) {
