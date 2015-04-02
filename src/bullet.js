@@ -204,7 +204,7 @@
                             fake.onopen(fake);
                         }
                         // Connection might have closed without a response body
-                        if (data && data.length !== 0 && data !== 'connection-id'){
+                        if (data && data.length !== 0 && data !== 'connection-id' && data !== 'pong'){
                             fake.onmessage({'data': data});
                         }
                         if (fake.readyState === OPEN){
