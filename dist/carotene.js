@@ -425,6 +425,9 @@ function caroteneConstructor() {
     };
 
     var onMessagePreprocess = function(evt) {
+        if (evt.data === 'pong') {
+            return;
+        }
         var payload = JSON.parse(evt.data);
         if( Object.prototype.toString.call( payload ) === '[object Array]' ) {
             for (var i =0; i < payload.length; ++i) {
