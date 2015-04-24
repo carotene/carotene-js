@@ -476,15 +476,15 @@ function caroteneConstructor() {
     };
 
     var processPresence = function(payload) {
-        if (this.onPresence) {
-            this.onPresence({channel: payload.channel, 
-                            subscribers: payload.subscribers});
+        if (onPresence) {
+            onPresence({channel: payload.channel, 
+                        subscribers: payload.subscribers});
         }
     };
 
     var processInfo = function(payload) {
-        if (this.onInfo) {
-            this.onInfo(payload);
+        if (onInfo) {
+            onInfo(payload);
         }
     };
 
